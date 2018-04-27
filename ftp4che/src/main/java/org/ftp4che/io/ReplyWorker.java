@@ -167,7 +167,10 @@ public class ReplyWorker extends Thread {
 			}
 		}
 		if (isListReply) {
-			String[] stringLines = output.split("\r\n");
+			//to prevent an unix file list
+			output.replaceAll("\r", "");
+			String[] stringLines = output.split("\n");
+			//String[] stringLines = output.split("\r\n");
 
 			for (int i = 0; i < stringLines.length; i++) {
 				// Empty lines cause NoSuchElementException in
