@@ -168,7 +168,7 @@ public class ReplyWorker extends Thread {
 		}
 		if (isListReply) {
 			//to prevent an unix file list
-			output.replaceAll("\r", "");
+			output = output.replaceAll("\r", "");
 			String[] stringLines = output.split("\n");
 			//String[] stringLines = output.split("\r\n");
 
