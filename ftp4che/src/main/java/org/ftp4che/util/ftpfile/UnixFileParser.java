@@ -28,7 +28,9 @@ public class UnixFileParser implements FileParser {
 		else if ( start == '+' )
 			throw new ParseException("Looks like this one is the wrong parser, but found EPLF format!", 0);
 		
-		FTPFile file = new FTPFile(FTPFile.UNIX, parentDirectory, null, serverString);
+		String unixParentDir = parentDirectory.replaceAll("\\\\", "/");
+		FTPFile file = new FTPFile(FTPFile.UNIX, unixParentDir, null, serverString);
+
 		String[] tokens = serverString.split(" ++");
 		
 		// are there enough tokens in the line
