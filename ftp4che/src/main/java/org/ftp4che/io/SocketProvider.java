@@ -23,8 +23,11 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
-
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.TrustManager;
 
 import org.apache.log4j.Logger;
@@ -210,17 +213,21 @@ public class SocketProvider {
     }
 
     public void negotiate(TrustManager[] trustManagers,KeyManager[] keyManagers) {
-        try {
-            supporter = new SSLSupport(socket, getSSLMode(),
-                    isControllConnection(), maxDownload, maxUpload);
-            supporter.setTrustManagers(trustManagers);
-            supporter.setKeyManagers(keyManagers);
-            supporter.initEngineAndBuffers();
-            supporter.handshake();
-            // TODO: throw exception and handle it !!
-        } catch (Exception e) {
-            log.fatal(e, e);
-        }
+      try {
+        negotiateWithException(trustManagers, keyManagers);
+        // TODO: throw exception and handle it !!
+      } catch (Exception e) {
+          log.fatal(e, e);
+      }
+    }
+    
+    public void negotiateWithException(TrustManager[] trustManagers,KeyManager[] keyManagers) throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException, SSLException, IOException {
+      supporter = new SSLSupport(socket, getSSLMode(),
+              isControllConnection(), maxDownload, maxUpload);
+      supporter.setTrustManagers(trustManagers);
+      supporter.setKeyManagers(keyManagers);
+      supporter.initEngineAndBuffers();
+      supporter.handshake();
     }
 
 }

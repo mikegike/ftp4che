@@ -17,7 +17,7 @@
 package org.ftp4che.impl;
 
 import java.io.IOException;
-
+import javax.net.ssl.SSLException;
 import org.apache.log4j.Logger;
 import org.ftp4che.FTPConnection;
 import org.ftp4che.commands.Command;
@@ -91,7 +91,7 @@ public class SecureFTPConnection extends FTPConnection {
         if (authCommand == null || ReplyCode.isPositiveCompletionReply(reply)) {
             try {
                 socketProvider.setSSLMode(getConnectionType());
-                socketProvider.negotiate(this.getTrustManagers(),this.getKeyManagers());
+                socketProvider.negotiateWithException(this.getTrustManagers(),this.getKeyManagers());
                 if (authCommand == null) {
                     // We are in implicit mode and must read the initial reply
                 	Reply connectReply = ReplyWorker.readReply(this.socketProvider);
@@ -100,6 +100,9 @@ public class SecureFTPConnection extends FTPConnection {
                     connectReply.dumpReply();
                 }
             } catch (Exception e) {
+                if(e instanceof SSLException) {
+                  throw (SSLException)e;
+                }
                 log.error(e, e);
             }
             reply = sendCommand(new Command(Command.USER, getUser()));
